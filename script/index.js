@@ -84,8 +84,10 @@ const displayIssues = (issues) => {
         //clone the issues card template
         const cardClone = template.content.cloneNode(true);
         const card = cardClone.querySelector('.issue-card'); //get the main div from the clone
+        //start with Green as the default
         let borderClass = 'border-t-[#00A96E]';
         let statusIcon = './assets/Open-Status.png';
+        //if the status is 'closed', change it to Indigo
         if(issue.status === 'closed'){
             borderClass = 'border-t-indigo-500';
             statusIcon = './assets/closed-status .png'; 
@@ -103,7 +105,6 @@ const displayIssues = (issues) => {
         card.querySelector('.issue-desc').innerText = issue.description;
 
         const tagsHtml = issue.labels.map(tag => getLabelHTML(tag)).join(''); //this will turn the badge of bug design into span tag which is in machine.js
-
         card.querySelector('.labels-container').innerHTML = tagsHtml;
         card.querySelector('.issue-meta').innerText = `#${issue.id} by ${issue.author}`;
         card.querySelector('.issue-date').innerText = new Date(issue.createdAt).toLocaleDateString();
@@ -143,11 +144,11 @@ const displayIssueDetails = (issue) => {
   //while map create a new list, in the mean time join is connected them together without whitespace.
 };
 
-//search logic
-//use searchvalues as variable that store user types cz it calling the notification api it will broke
+let searchTimeout;
 const searchInput = document.getElementById("search-input");
 if (searchInput) {
   searchInput.addEventListener("input", () => {
+    clearTimeout(searchTimeout);
     const searchValue = searchInput.value.trim().toLowerCase();
     
     if (!searchValue) {
@@ -156,14 +157,22 @@ if (searchInput) {
       return;
     }
     
-    manageSpinner(true);
-    fetch(`https://phi-lab-server.vercel.app/api/v1/lab/issues/search?q=${searchValue}`)
-      .then(res => res.json())
-      .then(data => {
-        const filtered = data.data.filter(issue => currentActiveTab === 'all' || issue.status === currentActiveTab);
-        displayIssues(filtered);
-        manageSpinner(false);
-      });
+    searchTimeout = setTimeout(() => {
+        manageSpinner(true);
+        fetch(`https://phi-lab-server.vercel.app/api/v1/lab/issues/search?q=${searchValue}`)
+          .then(res => res.json())
+          .then(data => {
+            const results = data.data || [];
+            // filter search results based on the active tab
+            const filtered = results.filter(issue => currentActiveTab === 'all' || issue.status === currentActiveTab);
+            displayIssues(filtered);
+            manageSpinner(false);
+          })
+          .catch(err => {
+            console.error("Search failed:", err);
+            manageSpinner(false);
+          });
+    }, 300); // 300ms debounce to save api calls
   });
 }
 
