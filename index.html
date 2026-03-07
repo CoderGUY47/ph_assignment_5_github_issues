@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- DaisyUI and Tailwind -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Github Issues Tracker</title>
+    <link rel="shortcut icon" type="image/x-icon" href="./jobs.png">
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <style type="text/tailwindcss">
+      * {
+      font-family: 'Outfit', sans-serif;
+    }
+    .btn-tab.active{
+      @apply bg-purple-600 text-white shadow-md border border-violet-600;
+    }
+    .btn-tab:not(.active) {
+      @apply bg-[#2a2a2a] text-gray-300 border border-gray-600/50 hover:bg-gray-700 hover:text-white;
+    }
+  </style>
+  </head>
+
+  <body class="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-white rounded-2xl shadow-xl border border-slate-100 p-6 md:p-8">
+
+      <div class="flex flex-col items-center mb-4">
+        <div class="bg-[#1B1F23] size-16 flex items-center justify-center rounded-full mb-4 shadow-lg">
+          <i class="fa-brands fa-github text-4xl text-white"></i>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-800">GitHub Issues Tracker</h2>
+        <p class="text-gray-500 text-sm mt-1 font-medium text-center">Sign in to manage your issues</p>
+      </div>
+
+      <fieldset class="fieldset w-full border-none p-0">
+
+        <div class="mb-3">
+          <label class="fieldset-label font-semibold text-gray-700 mb-1">Username</label>
+          <input type="text" id="username-input"
+            class="input input-bordered w-full bg-white border-gray-200 focus:border-indigo-500"
+            placeholder="Enter Username" />
+          <p class="mt-1 text-xs text-indigo-600 font-medium italic">Default: admin</p>
+        </div>
+
+        <div class="mb-3">
+          <label class="fieldset-label font-semibold text-gray-700 mb-1">Password</label>
+          <input type="password" id="password-input"
+            class="input input-bordered w-full bg-white border-gray-200 focus:border-indigo-500"
+            placeholder="Enter Password" />
+          <p class="mt-1 text-xs text-indigo-600 font-medium italic">Default: admin123</p>
+        </div>
+
+        <button onclick="window.location.href='./home.html'" id="login-btn"
+          class="btn btn-primary w-full bg-indigo-600 border-none hover:bg-indigo-700 text-white shadow-md">
+          Sign In
+        </button>
+      </fieldset>
+
+      <div class="divider relative grid grid-cols-3 py-4 text-gray-300 text-xs font-bold uppercase tracking-widest">
+        <hr>
+        <p>OR</p>
+        <hr>
+      </div>
+
+      <div class="bg-slate-50 rounded-xl p-5 border border-dashed border-slate-200">
+        <p class="text-center text-xs text-slate-400 font-normal tracking-widest mb-2">Demo Credentials</p>
+        <div class="flex flex-col items-center text-sm text-gray-600 space-y-1">
+          <p class="text-lg"><strong>Username:</strong> <span class="select-all">admin</span></p>
+          <p class="text-lg"><strong>Password:</strong> <span class="select-all">admin123</span></p>
+        </div>
+      </div>
+    </div>
+
+    <script src="./script/login.js"></script>
+    <script src="./script/index.js"></script>
+  </body>
+
+</html>

@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+  <title>Issues Tracker - Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet" />
+  <style type="text/tailwindcss">
+    * {
+        font-family: "Outfit", sans-serif;
+      }
+      body {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .no-ring:focus-within {
+        outline: none !important;
+        border-color: #d1d5db !important; /* keeps border gray instead of turning blue/purple */
+        box-shadow: none !important;
+      }
+    </style>
+</head>
+
+<body class="bg-white text-gray-900">
+  <nav class="navbar bg-white border-b border-slate-200 px-4 md:px-8 sticky top-0 z-50 shadow-sm">
+    <div class="flex-1">
+      <a class="btn btn-ghost text-xl gap-2 normal-case">
+        <i class="fa-brands fa-github text-3xl"></i>
+        <span class="font-bold tracking-tight">GitHub Issues Tracker</span>
+      </a>
+    </div>
+
+    <div class="flex items-center gap-1">
+      <label
+        class="input input-bordered no-ring flex items-center gap-2 w-24 md:w-auto bg-gray-50 border-gray-300 transition-all">
+        <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
+        <input id="search-input" type="text" class="grow font-medium focus:outline-none" placeholder="Search" />
+      </label>
+      <button class="btn btn-md btn-primary text-xs">
+        <i class="fa-solid fa-plus"> New Issues</i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- switchtab panel -->
+  <section class="switch-tab-bar w-9/12 mx-auto mt-6 pb-10">
+    <div class="mx-auto border-0 mt-6">
+      <div class="flex gap-3 py-3" id="tab-container">
+        <button onclick="switchTab('all')" id="all-tab"
+          class="btn btn-tab w-24 py-2 rounded-lg text-sm font-medium transition-all border-transparent text-white btn-primary">
+          All
+        </button>
+        <button onclick="switchTab('open')" id="open-tab"
+          class="btn btn-tab w-24 py-2 rounded-lg text-sm font-medium transition-all bg-white text-gray-700 border border-gray-300">
+          Open
+        </button>
+        <button onclick="switchTab('closed')" id="closed-tab"
+          class="btn btn-tab w-24 py-2 rounded-lg text-sm font-medium transition-all bg-white text-gray-700 border border-gray-300">
+          Closed
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="w-9/12 mx-auto mt-6">
+    <div class="flex justify-between items-center">
+      <div class="flex gap-x-4 items-center justify-center">
+        <div class="bg-[#ECE4FF] w-12 h-12 flex p-3 rounded-full">
+          <img src="./assets/Aperture.png" alt="" />
+        </div>
+        <div>
+          <h3 id="issues-counter" class="font-semibold text-gray-900 text-lg uppercase">
+            50 issues
+          </h3>
+          <p class="font-normal text-gray-400 text-sm">
+            Track and manage your project issues
+          </p>
+        </div>
+      </div>
+      <div class="flex gap-7">
+        <circle class="flex items-center justify-center gap-x-1">
+          <i class="fa-solid fa-circle text-[#00A96E]"></i>
+          <p class="text-sm font-semibold uppercase">Open</p>
+        </circle>
+        <circle class="flex items-center justify-center gap-x-1">
+          <i class="fa-solid fa-circle text-indigo-600"></i>
+          <p class="font-semibold text-sm uppercase">Closed</p>
+        </circle>
+      </div>
+    </div>
+  </section>
+
+  <section class="w-9/12 mx-auto mt-6 mb-12">
+    <div id="issue-list-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 place-items-center">
+      <!-- cards will be showing here -->
+    </div>
+  </section>
+  <!-- template for issue cards-->
+  <template id="issue-card-template">
+    <div
+      class="issue-card cursor-pointer g transition-transform space-y-2 border-t-[5px] rounded-lg flex flex-col justify-between w-[275px] h-[279px] p-4 shadow-black/25 shadow-lg bg-slate-200/30 border border-gray-100">
+      <div class="flex justify-between items-center">
+        <img class="status-img w-auto h-6 object-contain" src="" alt="status" />
+        <div class="priority-container"></div>
+      </div>
+      <h3 class="issue-title text-base font-bold text-gray-900 leading-tight"></h3>
+      <p class="issue-desc text-[13px] font-normal text-gray-500 leading-relaxed line-clamp-3"></p>
+      <div class="flex flex-wrap gap-2 mt-1">
+        <div class="labels-container flex flex-wrap gap-2 w-full"></div>
+      </div>
+      <span class="h-[1px] rounded-full w-full bg-gray-300/80"></span>
+      <div class="mt-auto space-y-1 pt-1 flex justify-between">
+        <p class="issue-meta text-gray-400 text-[11px] font-medium"></p>
+        <p class="issue-date text-gray-400 text-[11px] font-medium"></p>
+      </div>
+    </div>
+  </template>
+
+  <dialog id="issue_modal" class="modal modal-bottom sm:modal-middle">
+    <div class="modal-box w-11/12 max-w-2xl bg-white rounded-xl shadow-2xl p-0 overflow-hidden">
+      <div id="modal-header" class="px-6 py-4 flex justify-between items-center border-b border-gray-100 relative">
+        <div class="flex items-center gap-3">
+          <p id="modal-issue-id" class="text-sm font-semibold text-gray-400">
+            #--
+          </p>
+          <div id="modal-status-badge"></div>
+        </div>
+        <form method="dialog">
+          <button class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4 text-gray-500 hover:bg-gray-100">
+            ✕
+          </button>
+        </form>
+      </div>
+
+      <div id="modal" class="px-6 py-5 space-y-4">
+        <div>
+          <h2 id="modal-title" class="text-2xl font-bold text-gray-900 leading-tight">
+            Loading...
+          </h2>
+          <div class="flex items-center gap-4 mt-2 text-sm text-gray-500">
+            <span class="flex items-center gap-1"><i class="fa-regular fa-user"></i>
+              <span id="modal-author">--</span></span>
+            <span class="flex items-center gap-1"><i class="fa-regular fa-calendar"></i>
+              <span id="modal-date">--</span></span>
+          </div>
+          <div class="flex items-center gap-4 mt-2 text-xs text-gray-400">
+            <span class="flex items-center gap-1"><i class="fa-solid fa-user-check"></i> Assignee:<span id="modal-assignee">--</span></span>
+            <span class="flex items-center gap-1"><i class="fa-solid fa-clock-rotate-left"></i> Updated: <span id="modal-updated">--</span></span>
+          </div>
+        </div>
+
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-100">
+          <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
+            Description
+          </h4>
+          <p id="modal-description" class="text-gray-600 text-[15px] leading-relaxed">
+            ...
+          </p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 pt-2">
+          <div>
+            <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Priority</h4>
+            <div id="modal-priority"></div>
+          </div>
+          <div>
+            <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Labels</h4>
+            <div id="modal-labels" class="flex flex-wrap gap-2"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- new modal action section -->
+      <div class="modal-action p-4 bg-gray-50 border-t border-gray-100">
+        <form method="dialog">
+          <button class="btn btn-sm md:btn-md btn-primary px-8">Close</button>
+        </form>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
+
+
+</body>
+</html>
