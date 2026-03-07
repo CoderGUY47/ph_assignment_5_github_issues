@@ -47,6 +47,9 @@
       <button class="btn btn-md btn-primary text-xs">
         <i class="fa-solid fa-plus"> New Issues</i>
       </button>
+      <button id="logout-btn" class="btn btn-md btn-ghost text-xs text-red-500 hover:bg-red-50">
+        <i class="fa-solid fa-right-from-bracket"> Logout</i>
+      </button>
     </div>
   </nav>
 
@@ -70,8 +73,8 @@
     </div>
   </section>
 
-  <section class="w-9/12 mx-auto mt-6">
-    <div class="flex justify-between items-center">
+  <section class="w-9/12 mx-auto mb-4 -mt-4">
+    <div class="flex justify-between items-center bg-black/10 py-3 rounded-xl border-2 border-gray-300 p-4">
       <div class="flex gap-x-4 items-center justify-center">
         <div class="bg-[#ECE4FF] w-12 h-12 flex p-3 rounded-full">
           <img src="./assets/Aperture.png" alt="" />
@@ -99,14 +102,18 @@
   </section>
 
   <section class="w-9/12 mx-auto mt-6 mb-12">
-    <div id="issue-list-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 place-items-center">
+    <!-- loading spinner -->
+    <div id="spinner" class="flex justify-center py-10">
+       <span class="loading loading-bars loading-xl"></span>
+    </div>
+
+    <div id="issue-list-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 space-y-4 place-items-center">
       <!-- cards will be showing here -->
     </div>
   </section>
-  <!-- template for issue cards-->
+  <!-- template used for hidden mainly, it like hidden, but temolate used for DOM specially-->
   <template id="issue-card-template">
-    <div
-      class="issue-card cursor-pointer g transition-transform space-y-2 border-t-[5px] rounded-lg flex flex-col justify-between w-[275px] h-[279px] p-4 shadow-black/25 shadow-lg bg-slate-200/30 border border-gray-100">
+    <div class="issue-card cursor-pointer g transition-transform space-y-2 border-t-[5px] rounded-lg flex flex-col justify-between w-[275px] h-[279px] p-4 shadow-black/25 shadow-lg bg-slate-200/30 border border-gray-100">
       <div class="flex justify-between items-center">
         <img class="status-img w-auto h-6 object-contain" src="" alt="status" />
         <div class="priority-container"></div>
@@ -124,68 +131,80 @@
     </div>
   </template>
 
+  <!-- pop up design manually first then, redessign withthe help of ai-->
   <dialog id="issue_modal" class="modal modal-bottom sm:modal-middle">
-    <div class="modal-box w-11/12 max-w-2xl bg-white rounded-xl shadow-2xl p-0 overflow-hidden">
-      <div id="modal-header" class="px-6 py-4 flex justify-between items-center border-b border-gray-100 relative">
-        <div class="flex items-center gap-3">
-          <p id="modal-issue-id" class="text-sm font-semibold text-gray-400">
-            #--
-          </p>
+    <div class="modal-box w-11/12 max-w-2xl bg-white rounded-2xl shadow-2xl p-0 overflow-hidden border border-gray-100">
+      
+      <!-- modal header -->
+      <div id="modal-header" class="px-8 py-5 flex justify-between items-center border-b bg-gray-50/50 backdrop-blur-sm border-gray-100 relative">
+        <div class="flex items-center gap-4">
+          <span id="modal-issue-id" class="px-2.5 py-1 bg-gray-200/60 rounded text-xs font-bold text-gray-500 tracking-wider">#--</span>
           <div id="modal-status-badge"></div>
         </div>
         <form method="dialog">
-          <button class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4 text-gray-500 hover:bg-gray-100">
-            ✕
-          </button>
+          <button class="btn btn-sm btn-circle btn-ghost text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors">✕</button>
         </form>
       </div>
 
-      <div id="modal" class="px-6 py-5 space-y-4">
-        <div>
-          <h2 id="modal-title" class="text-2xl font-bold text-gray-900 leading-tight">
-            Loading...
-          </h2>
-          <div class="flex items-center gap-4 mt-2 text-sm text-gray-500">
-            <span class="flex items-center gap-1"><i class="fa-regular fa-user"></i>
-              <span id="modal-author">--</span></span>
-            <span class="flex items-center gap-1"><i class="fa-regular fa-calendar"></i>
-              <span id="modal-date">--</span></span>
-          </div>
-          <div class="flex items-center gap-4 mt-2 text-xs text-gray-400">
-            <span class="flex items-center gap-1"><i class="fa-solid fa-user-check"></i> Assignee:<span id="modal-assignee">--</span></span>
-            <span class="flex items-center gap-1"><i class="fa-solid fa-clock-rotate-left"></i> Updated: <span id="modal-updated">--</span></span>
+      <!-- modal content -->
+      <div id="modal" class="px-8 py-6 space-y-8">
+        
+        <!-- title and basic info -->
+        <div class="space-y-4">
+          <h2 id="modal-title" class="text-3xl font-extrabold text-gray-900 leading-tight tracking-tight">Loading...</h2>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-50/80 p-4 rounded-xl border border-gray-100/50">
+            <div class="space-y-2">
+              <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Reporter & Date</p>
+              <div class="flex flex-col gap-1 text-sm text-gray-600 font-medium">
+                <span class="flex items-center gap-2"><i class="fa-regular fa-user text-indigo-500"></i> <span id="modal-author">--</span></span>
+                <span class="flex items-center gap-2"><i class="fa-regular fa-calendar text-indigo-500"></i> <span id="modal-date">--</span></span>
+              </div>
+            </div>
+            <div class="space-y-2">
+              <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Assignee & History</p>
+              <div class="flex flex-col gap-1 text-sm text-gray-600 font-medium">
+                <span class="flex items-center gap-2"><i class="fa-solid fa-user-check text-green-500"></i> <span id="modal-assignee">--</span></span>
+                <span class="flex items-center gap-2"><i class="fa-solid fa-clock-rotate-left text-green-500"></i> <span id="modal-updated">--</span></span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="bg-gray-50 rounded-lg p-4 border border-gray-100">
-          <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
-            Description
-          </h4>
-          <p id="modal-description" class="text-gray-600 text-[15px] leading-relaxed">
-            ...
-          </p>
+        <!-- description section -->
+        <div class="space-y-3">
+          <div class="flex items-center gap-2 px-1">
+            <i class="fa-solid fa-align-left text-gray-400 text-xs"></i>
+            <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest">Description</h4>
+          </div>
+          <div class="bg-white border border-gray-100 shadow-sm rounded-xl p-5">
+            <p id="modal-description" class="text-gray-600 text-[15px] leading-relaxed font-normal">...</p>
+          </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4 pt-2">
-          <div>
-            <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Priority</h4>
+        <!-- priority and labels grid -->
+        <div class="grid grid-cols-2 gap-8 px-1">
+          <div class="space-y-3">
+            <h4 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Issue Priority</h4>
             <div id="modal-priority"></div>
           </div>
-          <div>
-            <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Labels</h4>
+          <div class="space-y-3">
+            <h4 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Category Tags</h4>
             <div id="modal-labels" class="flex flex-wrap gap-2"></div>
           </div>
         </div>
       </div>
 
-      <!-- new modal action section -->
-      <div class="modal-action p-4 bg-gray-50 border-t border-gray-100">
-        <form method="dialog">
-          <button class="btn btn-sm md:btn-md btn-primary px-8">Close</button>
+      <!-- modal footer action -->
+      <div class="modal-action p-6 bg-gray-50/50 border-t border-gray-100 mt-0">
+        <form method="dialog" class="w-full">
+          <button class="btn btn-primary w-full sm:w-auto sm:px-12 rounded-xl font-bold shadow-lg shadow-indigo-100 transition-all hover:-translate-y-0.5 active:translate-y-0">
+            Close Details
+          </button>
         </form>
       </div>
     </div>
-    <form method="dialog" class="modal-backdrop">
+    <form method="dialog" class="modal-backdrop backdrop-blur-[2px]">
       <button>close</button>
     </form>
   </dialog>

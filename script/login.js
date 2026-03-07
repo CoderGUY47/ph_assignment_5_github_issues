@@ -1,5 +1,4 @@
 document.getElementById("login-btn").addEventListener("click", function(){
-    
     console.log("Login button clicked");
     const usernameInput = document.getElementById("username-input").value;
     console.log(usernameInput);
