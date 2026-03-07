@@ -32,29 +32,30 @@
 <body class="bg-white text-gray-900">
   <nav class="navbar bg-white border-b border-slate-200 px-4 md:px-8 sticky top-0 z-50 shadow-sm">
     <div class="flex-1">
-      <a class="btn btn-ghost text-xl gap-2 normal-case">
-        <i class="fa-brands fa-github text-3xl"></i>
-        <span class="font-bold tracking-tight">GitHub Issues Tracker</span>
+      <a class="btn btn-ghost text-lg md:text-xl gap-2 normal-case p-0 sm:p-2">
+        <i class="fa-brands fa-github text-2xl md:text-3xl"></i>
+        <span class="font-bold tracking-tight hidden sm:block">GitHub Issues Tracker</span>
+        <span class="font-bold tracking-tight block sm:hidden">Issues</span>
       </a>
     </div>
 
-    <div class="flex items-center gap-1">
+    <div class="flex items-center gap-2">
       <label
-        class="input input-bordered no-ring flex items-center gap-2 w-24 md:w-auto bg-gray-50 border-gray-300 transition-all">
+        class="input input-bordered no-ring flex items-center gap-2 w-32 sm:w-48 md:w-auto bg-gray-50 border-gray-300 transition-all h-10 md:h-12">
         <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
-        <input id="search-input" type="text" class="grow font-medium focus:outline-none" placeholder="Search" />
+        <input id="search-input" type="text" class="grow font-medium focus:outline-none text-sm" placeholder="Search" />
       </label>
-      <button class="btn btn-md btn-primary text-xs">
-        <i class="fa-solid fa-plus"> New Issues</i>
+      <button class="btn h-10 md:h-12 btn-primary border-none text-xs md:text-sm">
+        <i class="fa-solid fa-plus"></i><span class="hidden md:inline ml-1">New Issues</span>
       </button>
-      <button id="logout-btn" class="btn btn-md btn-ghost text-xs text-red-500 hover:bg-red-50">
-        <i class="fa-solid fa-right-from-bracket"> Logout</i>
+      <button id="logout-btn" class="btn w-28 h-10 md:w-32 md:h-12 bg-red-500/90 border-none text-white hover:bg-red-600 transition-all p-2 text-xs md:text-sm">
+        <i class="fa-solid fa-right-from-bracket"></i><span class="hidden md:inline ml-1">Logout</span>
       </button>
     </div>
   </nav>
 
   <!-- switchtab panel -->
-  <section class="switch-tab-bar w-9/12 mx-auto mt-6 pb-10">
+  <section class="switch-tab-bar w-[95%] md:w-11/12 lg:w-9/12 mx-auto mt-6 pb-6 md:pb-10">
     <div class="mx-auto border-0 mt-6">
       <div class="flex gap-3 py-3" id="tab-container">
         <button onclick="switchTab('all')" id="all-tab"
@@ -73,10 +74,10 @@
     </div>
   </section>
 
-  <section class="w-9/12 mx-auto mb-4 -mt-4">
-    <div class="flex justify-between items-center bg-black/10 py-3 rounded-xl border-2 border-gray-300 p-4">
+  <section class="w-[95%] md:w-11/12 lg:w-9/12 mx-auto mb-4 -mt-4">
+    <div class="flex flex-col sm:flex-row justify-between items-center bg-black/5 sm:bg-black/10 py-4 sm:py-3 rounded-xl border-2 border-gray-300 p-4 gap-4">
       <div class="flex gap-x-4 items-center justify-center">
-        <div class="bg-[#ECE4FF] w-12 h-12 flex p-3 rounded-full">
+        <div class="bg-indigo-200/60 w-12 h-12 flex p-3 rounded-full">
           <img src="./assets/Aperture.png" alt="" />
         </div>
         <div>
@@ -88,7 +89,7 @@
           </p>
         </div>
       </div>
-      <div class="flex gap-7">
+      <div class="flex gap-7 justify-start">
         <circle class="flex items-center justify-center gap-x-1">
           <i class="fa-solid fa-circle text-[#00A96E]"></i>
           <p class="text-sm font-semibold uppercase">Open</p>
@@ -101,13 +102,13 @@
     </div>
   </section>
 
-  <section class="w-9/12 mx-auto mt-6 mb-12">
+  <section class="w-[95%] md:w-11/12 lg:w-9/12 mx-auto mt-6 mb-12">
     <!-- loading spinner -->
     <div id="spinner" class="flex justify-center py-10">
        <span class="loading loading-bars loading-xl"></span>
     </div>
 
-    <div id="issue-list-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 space-y-4 place-items-center">
+    <div id="issue-list-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 place-items-center">
       <!-- cards will be showing here -->
     </div>
   </section>

@@ -167,7 +167,7 @@ if (searchInput) {
   });
 }
 
-// Logout logic
+// lgout logic
 const logoutBtn = document.getElementById("logout-btn");
 if (logoutBtn) {
   logoutBtn.addEventListener("click", () => {
@@ -175,6 +175,6 @@ if (logoutBtn) {
   });
 }
 
-// Initial load
+//initial load
 loadIssues();
 
