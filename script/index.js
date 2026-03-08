@@ -1,4 +1,3 @@
-
 let currentActiveTab = 'all';
 let allIssues = [];
 
@@ -6,7 +5,6 @@ let allIssues = [];
 const manageSpinner = (show) => {
   const spinner = document.getElementById("spinner");
   const issuesContainer = document.getElementById('issue-list-container');
-  
   if (show) {
     spinner.classList.remove("hidden");
     if (issuesContainer) issuesContainer.classList.add("hidden");
@@ -43,16 +41,15 @@ const switchTab = (tab) => {
     manageSpinner(true); // show spinner for feedback
     currentActiveTab = tab; // save active tab context for search filtering
     const tabs = ['all', 'open', 'closed'];
-    
     tabs.forEach(t =>{
         const btn = document.getElementById(`${t}-tab`)
         if(t === tab){
-            btn.classList.add('bg-blue-600', 'text-white', 'border-transparent', 'btn-primary')
-            btn.classList.remove('bg-white', 'text-gray-700', 'border', 'border-gray-300')
+            btn.classList.add('bg-indigo-600', 'text-white', 'shadow-lg', 'shadow-indigo-600/20')
+            btn.classList.remove('text-slate-400', 'hover:bg-slate-800')
         }
         else{
-            btn.classList.add('bg-white', 'text-gray-700', 'border', 'border-gray-300')
-            btn.classList.remove('bg-blue-600', 'text-white', 'border-transparent', 'btn-primary')
+            btn.classList.add('text-slate-400', 'hover:bg-slate-800')
+            btn.classList.remove('bg-indigo-600', 'text-white', 'shadow-lg', 'shadow-indigo-600/20')
         }
     })
 
@@ -75,7 +72,7 @@ const displayIssues = (issues) => {
     }
 
     if(issues.length === 0){
-        issuesContainer.innerHTML = `<h3 class="text-xl text-center text-gray-500 col-span-4 mt-10">No issues found.</h3>`;
+        issuesContainer.innerHTML = `<h3 class="text-xl text-center text-slate-500 col-span-4 mt-20 font-medium">No records matching your search.</h3>`;
         return;
     }
 
@@ -84,29 +81,39 @@ const displayIssues = (issues) => {
         //clone the issues card template
         const cardClone = template.content.cloneNode(true);
         const card = cardClone.querySelector('.issue-card'); //get the main div from the clone
-        //start with Green as the default
-        let borderClass = 'border-t-[#00A96E]';
-        let statusIcon = './assets/Open-Status.png';
-        //if the status is 'closed', change it to Indigo
+        // Start with Green as the default for the top bar
+        let topBarBg = 'bg-[#00A96E]';
+        let statusIconClass = 'fa-door-open text-emerald-400';
+        
+        // If the status is 'closed', change it to Indigo
         if(issue.status === 'closed'){
-            borderClass = 'border-t-indigo-500';
-            statusIcon = './assets/closed-status .png'; 
+            topBarBg = 'bg-indigo-500';
+            statusIconClass = 'fa-door-closed text-indigo-400'; 
         }
-        //apply DOM propertys
-        card.classList.add(borderClass); 
+
+        // Apply background to the top bar div
+        const topBar = card.querySelector('.card-border-top');
+        if(topBar) {
+            topBar.className = `card-border-top h-2 w-full absolute top-0 left-0 transition-colors duration-300 ${topBarBg}`;
+        }
+
         card.onclick = () => {
             loadIssueDetail(issue.id);
         }
 
-        //target the specific parts of clone
-        card.querySelector('.status-img').src = statusIcon;
+        // Target the status icon
+        const iconEl = card.querySelector('.status-icon');
+        if(iconEl) {
+            iconEl.classList.add(...statusIconClass.split(' '));
+        }
         card.querySelector('.priority-container').innerHTML = getPriorityBadgeHTML(issue.priority);
         card.querySelector('.issue-title').innerText = issue.title;
         card.querySelector('.issue-desc').innerText = issue.description;
 
         const tagsHtml = issue.labels.map(tag => getLabelHTML(tag)).join(''); //this will turn the badge of bug design into span tag which is in machine.js
         card.querySelector('.labels-container').innerHTML = tagsHtml;
-        card.querySelector('.issue-meta').innerText = `#${issue.id} by ${issue.author}`;
+        const metaSpan = card.querySelector('.issue-meta span');
+        if(metaSpan) metaSpan.innerText = `#${issue.id} by ${issue.author}`;
         card.querySelector('.issue-date').innerText = new Date(issue.createdAt).toLocaleDateString();
 
         //append the card to the container
@@ -131,11 +138,11 @@ const displayIssueDetails = (issue) => {
   document.getElementById('modal-description').innerText = issue.description;
 
   const isClosed = issue.status === 'closed';
-  const statusClass = isClosed ? 'bg-indigo-100 text-indigo-700' : 'bg-[#00A96E]/20 text-[#00A96E]';
-  const statusIcon = isClosed ? '<i class="fa-solid fa-circle-check"></i>' : '<i class="fa-regular fa-circle-dot"></i>';
-  document.getElementById('modal-status-badge').innerHTML = `
-    <span class="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase ${statusClass}">
-      ${statusIcon} ${issue.status}
+  const statusBadge = document.getElementById("modal-status-badge");
+  
+  statusBadge.innerHTML = `
+    <span class="flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${isClosed ? 'bg-indigo-500/10 border border-indigo-500/20 text-indigo-400' : 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400'}">
+        <i class="fa-solid ${isClosed ? 'fa-door-closed' : 'fa-door-open'} text-xs"></i> ${issue.status}
     </span>
   `;
 
